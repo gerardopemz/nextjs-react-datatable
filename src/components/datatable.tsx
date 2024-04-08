@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {
   Table,
@@ -8,57 +10,70 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
 
-export default function Datatable() {
+interface DatatableProps<TData, TValue> {
+  data: TData[];
+  columns: ColumnDef<TData, TValue>[];
+  caption?: string;
+}
+
+export default function Datatable<TData, TValue>({
+  data,
+  columns,
+  caption,
+}: DatatableProps<TData, TValue>) {
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
   return (
-    <Table>
-      <TableCaption>List of users.</TableCaption>
-      <TableHeader>
-        <TableRow>
-          <TableHead>ID</TableHead>
-          <TableHead>Name</TableHead>
-          <TableHead>Username</TableHead>
-          <TableHead>Email</TableHead>
-          <TableHead>Company</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        <TableRow>
-          <TableCell>1</TableCell>
-          <TableCell>Leanne Graham</TableCell>
-          <TableCell>Bret</TableCell>
-          <TableCell>Sincere@april.bix</TableCell>
-          <TableCell>Romaguera-Crona</TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell>2</TableCell>
-          <TableCell>Ervin Howell</TableCell>
-          <TableCell>Antonette</TableCell>
-          <TableCell>Shanna@melissa.tv</TableCell>
-          <TableCell>Deckow-Crist</TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell>3</TableCell>
-          <TableCell>Clementine Bauch</TableCell>
-          <TableCell>Samantha</TableCell>
-          <TableCell>Nathan@yesenia.net</TableCell>
-          <TableCell>Romaguera-Jacobson</TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell>4</TableCell>
-          <TableCell>Patricia Lebsack</TableCell>
-          <TableCell>Karianne</TableCell>
-          <TableCell>Julianne.OConner@kory.org</TableCell>
-          <TableCell>Robel-Corkery</TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell>5</TableCell>
-          <TableCell>Chelsey Dietrich</TableCell>
-          <TableCell>Kamren</TableCell>
-          <TableCell>Lucio_Hettinger@annie.ca</TableCell>
-          <TableCell>Keebler LLC</TableCell>
-        </TableRow>
-      </TableBody>
-    </Table>
+    <div className="rounded-md border">
+      <Table>
+        {caption && <TableCaption>{caption}</TableCaption>}
+        <TableHeader>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <TableHead key={header.id}>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                </TableHead>
+              ))}
+            </TableRow>
+          ))}
+        </TableHeader>
+        <TableBody>
+          {table.getRowModel().rows?.length ? (
+            table.getRowModel().rows.map((row) => (
+              <TableRow key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="h-24 text-center">
+                No results.
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </div>
   );
 }
