@@ -13,8 +13,17 @@ import {
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
 import DatatableColumnHeader from "@/components/datatable-column-header";
+import DatatableRowSelectionHeader from "@/components/datatable-row-selection-header";
+import DatatableRowSelectionCell from "@/components/datatable-row-selection-cell";
 
 export const columns: ColumnDef<User>[] = [
+  {
+    id: "select",
+    header: ({ table }) => <DatatableRowSelectionHeader table={table} />,
+    cell: ({ row }) => <DatatableRowSelectionCell row={row} />,
+    enableSorting: false,
+    enableHiding: false,
+  },
   {
     accessorKey: "id",
     header: "ID",
