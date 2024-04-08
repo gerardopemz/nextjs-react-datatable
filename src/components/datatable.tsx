@@ -15,6 +15,7 @@ import {
   ColumnFiltersState,
   PaginationState,
   SortingState,
+  VisibilityState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -24,6 +25,13 @@ import {
 } from "@tanstack/react-table";
 import DatatablePagination from "./datatable-pagination";
 import { Input } from "./ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { Button } from "./ui/button";
 
 interface DatatableProps<TData, TValue> {
   data: TData[];
@@ -44,6 +52,7 @@ export default function Datatable<TData, TValue>({
   });
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
   const table = useReactTable({
     data,
@@ -55,30 +64,61 @@ export default function Datatable<TData, TValue>({
     onPaginationChange: setPagination,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
+    onColumnVisibilityChange: setColumnVisibility,
     state: {
       pagination,
       sorting,
       columnFilters,
+      columnVisibility,
     },
   });
 
   return (
     <div className="space-y-4">
-      {globalFilterColumn && (
-        <Input
-          placeholder="Search..."
-          value={
-            (table.getColumn(globalFilterColumn)?.getFilterValue() as string) ??
-            ""
-          }
-          onChange={(event) =>
-            table
-              .getColumn(globalFilterColumn)
-              ?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-      )}
+      <div className="flex items-center justify-between">
+        {globalFilterColumn && (
+          <Input
+            placeholder="Search..."
+            value={
+              (table
+                .getColumn(globalFilterColumn)
+                ?.getFilterValue() as string) ?? ""
+            }
+            onChange={(event) =>
+              table
+                .getColumn(globalFilterColumn)
+                ?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm"
+          />
+        )}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="ml-auto">
+              Columns
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {table
+              .getAllColumns()
+              .filter((column) => column.getCanHide())
+              .map((column) => {
+                return (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="capitalize"
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
+                    }
+                  >
+                    {column.id}
+                  </DropdownMenuCheckboxItem>
+                );
+              })}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
       <div className="rounded-md border">
         <Table>
           {caption && <TableCaption>{caption}</TableCaption>}

@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
-import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, EyeOff } from "lucide-react";
 
 interface DatatableColumnHeaderProps<TData, TValue>
   extends HTMLAttributes<HTMLDivElement> {
@@ -62,6 +62,11 @@ export default function DatatableColumnHeader<TData, TValue>({
               Reset
             </DropdownMenuItem>
           )}
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => column.toggleVisibility(false)}>
+            <EyeOff className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
+            Hide
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

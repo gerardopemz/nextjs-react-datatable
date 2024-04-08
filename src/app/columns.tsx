@@ -18,6 +18,7 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "id",
     header: "ID",
+    enableHiding: false,
   },
   {
     accessorKey: "name",
@@ -42,11 +43,13 @@ export const columns: ColumnDef<User>[] = [
     ),
   },
   {
+    id: "company",
     accessorKey: "company.name",
     header: "Company",
   },
   {
     id: "actions",
+    enableHiding: false,
     cell: ({ row }) => (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
