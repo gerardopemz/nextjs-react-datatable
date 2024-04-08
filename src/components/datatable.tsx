@@ -13,9 +13,11 @@ import {
 import {
   ColumnDef,
   PaginationState,
+  SortingState,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
+  getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import DatatablePagination from "./datatable-pagination";
@@ -35,15 +37,19 @@ export default function Datatable<TData, TValue>({
     pageSize: 5,
     pageIndex: 0,
   });
+  const [sorting, setSorting] = useState<SortingState>([]);
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
     onPaginationChange: setPagination,
+    onSortingChange: setSorting,
     state: {
       pagination,
+      sorting,
     },
   });
 

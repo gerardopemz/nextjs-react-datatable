@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
+import DatatableColumnHeader from "@/components/datatable-column-header";
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -20,7 +21,9 @@ export const columns: ColumnDef<User>[] = [
   },
   {
     accessorKey: "name",
-    header: "Name",
+    header: ({ column }) => (
+      <DatatableColumnHeader title="Name" column={column} />
+    ),
   },
   {
     accessorKey: "username",
